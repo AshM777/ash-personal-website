@@ -2,11 +2,19 @@ name = "ash"
 compatibility_date = "2024-03-02"
 
 [build]
-command = "npm run build"
+command = "npm install && npm run build"
 publish = "dist"
 
 [build.upload]
 format = "directory"
 
 [site]
-bucket = "dist" 
+bucket = "dist"
+
+[env.production]
+name = "ash"
+route = "https://ash.pages.dev/*"
+zone_id = ""  # You'll need to add your Cloudflare zone ID here
+
+[env.production.vars]
+NODE_ENV = "production" 
