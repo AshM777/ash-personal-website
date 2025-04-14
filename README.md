@@ -23,7 +23,7 @@ A personal portfolio and blog website built with Astro, Tailwind and TypeScript.
 - ✅ MDX Support (components in your markdown)
 
 ## 💯 Lighthouse score
-![Astro Nano Lighthouse Score](_lighthouse.png)
+![Lighthouse Score](_lighthouse.png)
 
 ## 🕊️ Lightweight
 No frameworks or added bulk
