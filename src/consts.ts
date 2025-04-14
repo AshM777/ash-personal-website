@@ -19,13 +19,13 @@ export const THREADS: Metadata = {
 };
 
 export const WORK: Metadata = {
-  TITLE: "Work",
-  DESCRIPTION: "Where I have worked and what I have done.",
+  TITLE: "work",
+  DESCRIPTION: "where I have worked and what I have done.",
 };
 
 export const PROJECTS: Metadata = {
-  TITLE: "Projects",
-  DESCRIPTION: "A collection of my projects, with links to repositories and demos.",
+  TITLE: "projects",
+  DESCRIPTION: "collection of my projects, with links to repositories and demos.",
 };
 
 export const GALLERY: Metadata = {
@@ -36,18 +36,18 @@ export const GALLERY: Metadata = {
 export const SOCIALS: Socials = [
   { 
     NAME: "twitter-x",
-    HREF: "https://twitter.com/_manchanda_v",
+    HREF: "https://twitter.com/_manchanda_",
   },
   { 
     NAME: "github",
-    HREF: "https://github.com/markhorn-dev"
+    HREF: "https://github.com/AshM777"
   },
   { 
     NAME: "linkedin",
-    HREF: "https://www.linkedin.com/in/markhorn-dev",
+    HREF: "https://www.linkedin.com/in/aashish-manchanda/",
   },
   { 
     NAME: "instagram",
-    HREF: "https://www.linkedin.com/in/markhorn-dev",
+    HREF: "https://www.instagram.com/manchanda.exe/",
   }
 ];

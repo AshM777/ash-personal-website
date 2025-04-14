@@ -4,7 +4,7 @@ import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
-  site: "https://planet-nano.pages.dev",
+  site: "https://ash.pages.dev",
   integrations: [mdx(), sitemap(), tailwind()],
   devToolbar: {
     enabled: false

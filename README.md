@@ -1,14 +1,10 @@
-![Astro Nano](_astro_nano.png)
+# Ash
 
-Astro Nano is a static, minimalist, lightweight, lightning fast portfolio and blog theme.
-
-Built with Astro, Tailwind and Typescript, an no frameworks.
-
-It was designed as an even more minimal theme than my popular theme [Astro Sphere](https://github.com/markhorn-dev/astro-sphere)
+A personal portfolio and blog website built with Astro, Tailwind and TypeScript.
 
 ## 🚀 Deploy your own
 
-[![Deploy with Vercel](_deploy_vercel.svg)](https://vercel.com/new/clone?repository-url=https://github.com/markhorn-dev/astro-nano)  [![Deploy with Netlify](_deploy_netlify.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/markhorn-dev/astro-nano)
+[![Deploy with Vercel](_deploy_vercel.svg)](https://vercel.com/new/clone?repository-url=https://github.com/AshM777/ash)  [![Deploy with Netlify](_deploy_netlify.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/AshM777/ash)
 
 ## 📋 Features
 
