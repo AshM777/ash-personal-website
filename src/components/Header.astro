@@ -2,6 +2,16 @@
 import Container from "@components/Container.astro";
 import Link from "@components/Link.astro";
 import { SITE } from "@consts";
+
+const backyardItems = [
+  { href: "/library", title: "Books", description: "Books I've read and want to read" },
+  { href: "/wall-of-love", title: "Wall of love", description: "Kind words from people I've worked with" },
+  { href: "/portfolio", title: "Portfolio", description: "A collection of my work, research, and writing" },
+  { href: "/things-i-own", title: "Things I own", description: "Tools and gear I use daily", comingSoon: true },
+  { href: "/side-projects", title: "Side projects", description: "Experiments and side ventures" },
+  { href: "/keynotes", title: "Keynotes", description: "Talks and presentations" },
+  { href: "/important-links", title: "Important links", description: "Resources and references I value" }
+];
 ---
 
 <header>
@@ -12,29 +22,76 @@ import { SITE } from "@consts";
           {SITE.NAME}
         </div>
       </Link>
-      <nav class="flex gap-1">
+      <nav class="flex gap-1 items-center">
         <Link href="/threads">
           threads
         </Link>
         <span>
           {`/`}
         </span>
-        <Link href="/gallery">
-          gallery
-        </Link>
+        <div class="backyard-dropdown relative">
+          <button class="backyard-trigger cursor-pointer inline-flex items-center gap-1 underline underline-offset-2 decoration-black/15 dark:decoration-white/30 hover:decoration-black/25 hover:dark:decoration-white/50 hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out" style="color: #3f3630;">
+            <span>backyard</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-transform">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="backyard-menu absolute top-full right-0 pt-2 opacity-0 pointer-events-none transition-opacity duration-200">
+            <div class="card space-y-1 p-4 w-80 lowercase">
+              {backyardItems.map(item => (
+                <a href={item.href} class="relative group flex flex-nowrap py-3 px-4 pr-10 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out">
+                  <div class="flex flex-col flex-1 truncate">
+                    <div class="font-semibold text-sm flex items-center gap-2">
+                      {item.title}
+                      {item.comingSoon && (
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] font-medium uppercase tracking-wide">
+                          coming soon!
+                        </span>
+                      )}
+                    </div>
+                    <div class="text-xs opacity-70">
+                      {item.description}
+                    </div>
+                  </div>
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 24 24"
+                    class="absolute top-1/2 right-2 -translate-y-1/2 size-5 stroke-2 fill-none stroke-current">
+                    <line x1="5" y1="12" x2="19" y2="12" class="translate-x-3 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out" />
+                    <polyline points="12 5 19 12 12 19" class="-translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out" />
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
         <span>
           {`/`}
         </span>
         <Link href="/work">
           work
         </Link>
-        <span>
-          {`/`}
-        </span>
-        <Link href="/projects">
-          projects
-        </Link>
       </nav>
     </div>
   </Container>
 </header>
+
+<style>
+  .backyard-dropdown:hover .backyard-menu,
+  .backyard-menu:hover {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .backyard-trigger {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+  }
+  
+  .backyard-menu {
+    z-index: 50;
+  }
+</style>

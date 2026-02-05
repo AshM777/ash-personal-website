@@ -11,6 +11,26 @@ html.dark {
   color-scheme: dark;
 }
 
+:root {
+  --paper: #f7f2ec;
+  --paper-contrast: #fbf8f4;
+  --ink: #3f3630;
+  --muted: #6e655f;
+  --border: rgba(63, 54, 48, 0.16);
+  --accent: #9b4f7a;
+  --accent-soft: rgba(155, 79, 122, 0.12);
+}
+
+html.dark {
+  --paper: #16130f;
+  --paper-contrast: #1d1914;
+  --ink: #f2eae1;
+  --muted: #b9aca2;
+  --border: rgba(242, 234, 225, 0.14);
+  --accent: #d37aaa;
+  --accent-soft: rgba(211, 122, 170, 0.16);
+}
+
 html,
 body {
   @apply size-full;
@@ -19,14 +39,16 @@ body {
 body {
   @apply font-sans antialiased;
   @apply flex flex-col;
-  @apply bg-stone-100 dark:bg-stone-900;
-  @apply text-black/50 dark:text-white/75;
+  background-color: var(--paper);
+  color: var(--ink);
 }
 
 header {
   @apply fixed top-0 left-0 right-0 z-50 py-5;
-  @apply bg-stone-100/75 dark:bg-stone-900/25;
-  @apply backdrop-blur-sm saturate-200;
+  background-color: color-mix(in srgb, var(--paper) 86%, transparent);
+  border-bottom: 1px solid var(--border);
+  @apply backdrop-blur-sm;
+  color: var(--ink);
 }
 
 main {
@@ -44,15 +66,68 @@ article {
 }
 
 @layer utilities {
+  .card {
+    border: 1px solid var(--border);
+    background-color: var(--paper-contrast);
+    @apply rounded-2xl p-6 shadow-sm;
+  }
+
+  .card-title {
+    color: var(--muted);
+    @apply text-xs font-semibold uppercase tracking-[0.18em];
+  }
+
+  .pill {
+    border: 1px solid var(--border);
+    background-color: var(--paper-contrast);
+    color: var(--muted);
+    @apply inline-flex items-center rounded-full px-3 py-1 text-sm transition-colors duration-200;
+  }
+
+  .pill:hover {
+    color: var(--ink);
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  }
+
   article a {
-    @apply font-sans text-current underline underline-offset-2;
-    @apply decoration-black/15 dark:decoration-white/30;
-    @apply transition-colors duration-300 ease-in-out;
+    color: var(--ink);
+    text-decoration-color: var(--accent-soft);
+    @apply font-sans underline underline-offset-2 transition-colors duration-300 ease-in-out;
   }
   article a:hover {
-    @apply text-black dark:text-white;
-    @apply decoration-black/25 dark:decoration-white/50;
+    color: var(--accent);
+    text-decoration-color: var(--accent);
   }
+}
+
+header a {
+  color: var(--ink);
+  text-decoration-color: var(--accent-soft);
+}
+
+header a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+header span {
+  color: var(--muted);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  color: var(--ink);
+}
+
+p,
+li,
+span {
+  color: inherit;
 }
 
 .animate {

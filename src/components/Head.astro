@@ -169,7 +169,8 @@ function toggleTheme(dark) {
     if (userTheme === "light" || userTheme === "dark") {
       toggleTheme(userTheme === "dark");
     } else {
-      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+      // Default to light mode
+      toggleTheme(false);
     }
   }
 

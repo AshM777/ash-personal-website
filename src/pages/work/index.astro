@@ -1,9 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
-import Container from "@components/Container.astro";
 import { dateRange } from "@lib/utils";
 import { WORK } from "@consts";
+import Link from "@components/Link.astro";
 
 const collection = (await getCollection("work"))
   .sort((a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf());
@@ -17,35 +17,226 @@ const work = await Promise.all(
 ---
 
 <PageLayout title={WORK.TITLE} description={WORK.DESCRIPTION}>
-  <Container>
-    <div class="space-y-10">
-      <div class="animate font-semibold text-black dark:text-white">
-        Work
-      </div>
-      <ul class="flex flex-col space-y-4">
-        { 
-          work.map(entry => (
-            <li class="animate">
-              <div class="text-sm opacity-75">
-                {dateRange(entry.data.dateStart, entry.data.dateEnd)}
-              </div>
-              <div class="font-semibold text-black dark:text-white">
-                {entry.data.company}
-              </div>
-              <div class="text-sm opacity-75">
-                {entry.data.role}
-              </div>
-              <article>
-                <entry.Content />
-              </article>
-            </li>
-          ))
-        }
-      </ul>
-<!-- 
-      <ul class="animate flex flex-col gap-4">
+  <div class="mx-auto max-w-5xl px-5">
+    <div class="space-y-14">
+      <section class="space-y-4">
+        <div class="animate text-3xl font-semibold text-black dark:text-white sm:text-4xl">
+          About
+        </div>
+        <p class="animate max-w-2xl text-base text-black/70 dark:text-white/70">
+          A look at my professional journey, achievements, and the work I'm passionate about.
+        </p>
+      </section>
 
-      </ul> -->
+      <section class="space-y-4">
+        <div class="animate text-xs font-semibold uppercase tracking-[0.2em] text-black/60 dark:text-white/60">
+          → A Little Context
+        </div>
+        <div class="animate grid gap-8 md:grid-cols-[65%_35%] items-start">
+          <div class="space-y-4">
+            <p class="text-base leading-relaxed text-black dark:text-white">
+              I sit at the intersection of design, product and strategy. These three are at the core of everything I build. Titles and disciplines are fickle and fleeting, but I love working as a generalist and expanding my responsibilities beyond design to business problems, customer obsession, understanding what sells, experiences that move metrics, research beyond prompts, and product strategy. Combining them into a coherent career is a weird and ongoing challenge.
+            </p>
+            <p class="text-base leading-relaxed text-black dark:text-white">
+              For the last decade, I've been building and scaling products that touch millions. With AI raising the floor and ceiling for both, my recent focus has been to build systems that are not only efficient but can enable others to learn fast with integrated design-ops. Majorly working as a super-IC to ensure maximum impact, I keep touching my 'mediocre developer' side to build and ship faster.
+            </p>
+            <p class="text-base leading-relaxed text-black dark:text-white">
+              Currently, I lead the AI and Data Security vertical for Cisco.
+            </p>
+            <p class="text-base leading-relaxed text-black dark:text-white font-medium">
+              <span class="text-lg">📍</span> Based out of SF/BLR. If you're building something interesting, I'd love to grab a coffee!
+            </p>
+            <p class="text-base leading-relaxed text-black dark:text-white">
+              Here's what I've been up to for the last few years:
+            </p>
+          </div>
+          <div class="hidden md:block pt-1">
+            <img
+              src="/images/profile/work-profile.png"
+              alt="Aashish Manchanda"
+              class="w-full rounded-lg border border-stone-300 object-cover shadow-sm dark:border-stone-700"
+              style="aspect-ratio: 3/4; object-fit: cover;"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="animate text-xs font-semibold uppercase tracking-[0.2em] text-black/60 dark:text-white/60">
+          Experience
+        </div>
+        <div class="space-y-10">
+          { 
+            work.map(entry => (
+              <article class="animate grid gap-4 border-b border-black/10 pb-8 dark:border-white/10 md:grid-cols-[160px_1fr]">
+                <div class="text-sm text-black/60 dark:text-white/60">
+                  {dateRange(entry.data.dateStart, entry.data.dateEnd)}
+                </div>
+                <div class="space-y-2">
+                  <div class="text-xl font-semibold text-black dark:text-white">
+                    {entry.data.company}
+                  </div>
+                  <div class="text-sm text-black/70 dark:text-white/70">
+                    {entry.data.role}
+                  </div>
+                  <article class="prose max-w-none prose-neutral dark:prose-invert">
+                    <entry.Content />
+                  </article>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="animate flex flex-wrap items-center justify-between gap-y-2">
+          <div class="text-xs font-semibold uppercase tracking-[0.2em] text-black/60 dark:text-white/60">
+            Keynotes & Panels
+          </div>
+          <Link href="/keynotes" class="text-sm">see all keynotes</Link>
+        </div>
+        <div class="space-y-6">
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">UXDX</div>
+              <div class="text-sm text-black/60 dark:text-white/60">May 2025</div>
+            </div>
+            <div class="text-sm text-black/70 dark:text-white/70">AI at Work - Experts' Panel | In-person, Bengaluru</div>
+            <p class="text-sm text-black/80 dark:text-white/80">Discussed AI design ethics and user-centric models for automation in the enterprise stack.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">UXDX Community</div>
+              <div class="text-sm text-black/60 dark:text-white/60">Apr 2023</div>
+            </div>
+            <div class="text-sm text-black/70 dark:text-white/70">Building & Scaling Design Teams | Virtual, Global</div>
+            <p class="text-sm text-black/80 dark:text-white/80">Shared frameworks for hiring, mentoring, and measuring impact in remote-first design orgs.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">NFT London</div>
+              <div class="text-sm text-black/60 dark:text-white/60">Nov 2022</div>
+            </div>
+            <div class="text-sm text-black/70 dark:text-white/70">Demystifying Utility NFTs | In-person, London, UK</div>
+            <p class="text-sm text-black/80 dark:text-white/80">Explained design challenges and opportunities in utility-based NFT ecosystems.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">Google I/O Extended</div>
+              <div class="text-sm text-black/60 dark:text-white/60">Jul 2022</div>
+            </div>
+            <div class="text-sm text-black/70 dark:text-white/70">Designing On-Chain | In-person & Virtual, Glasgow, UK</div>
+            <p class="text-sm text-black/80 dark:text-white/80">Introduced principles of decentralized UX and its implications for the Web3 future.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">GiveIndia</div>
+              <div class="text-sm text-black/60 dark:text-white/60">Jul 2021</div>
+            </div>
+            <div class="text-sm text-black/70 dark:text-white/70">Design for Non-Designers | Virtual, Global</div>
+            <p class="text-sm text-black/80 dark:text-white/80">Conducted a live workshop on inclusive design practices for social impact leaders.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="animate text-xs font-semibold uppercase tracking-[0.2em] text-black/60 dark:text-white/60">
+          Publications
+        </div>
+        <div class="space-y-6">
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">UXness Magazine</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2025</div>
+            </div>
+            <div class="text-sm text-black/70 dark:text-white/70">A Greener Click: UX for a Sustainable Digital Future</div>
+            <p class="text-sm text-black/80 dark:text-white/80">Explores UX patterns that reduce energy footprints in consumer apps and enterprise tools.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">International Journal of Scientific Research</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2025</div>
+            </div>
+            <div class="text-sm text-black/70 dark:text-white/70">Symbiotic UX Design Interfaces</div>
+            <p class="text-sm text-black/80 dark:text-white/80">Academic paper introducing a dynamic UX framework influenced by environmental data; peer-reviewed.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">The Startup</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2023</div>
+            </div>
+            <div class="text-sm text-black/70 dark:text-white/70">UX Designers vs Product Designers?</div>
+            <p class="text-sm text-black/80 dark:text-white/80">Popular blog post with 100K+ reads clarifying industry misconceptions for aspiring designers.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">International Conference on Advanced Engineering and Technology</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2020</div>
+            </div>
+            <div class="text-sm text-black/70 dark:text-white/70">Quad Band Fractal Microstrip Antenna for applications in S, C, and X bands</div>
+            <p class="text-sm text-black/80 dark:text-white/80">Co-authored an engineering research paper on antenna design for S, C, and X bands.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="animate text-xs font-semibold uppercase tracking-[0.2em] text-black/60 dark:text-white/60">
+          Awards & Recognition
+        </div>
+        <div class="space-y-6">
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">Cisco Recognition Awards</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2024-25</div>
+            </div>
+            <p class="text-sm text-black/80 dark:text-white/80">Honored with six awards in Cisco's Security division for driving exceptional impact through innovation, AI integration, accessibility, and design leadership.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">Antler Residency Programme</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2025</div>
+            </div>
+            <p class="text-sm text-black/80 dark:text-white/80">Secured the highly competitive Antler Singapore Residency (acceptance rate &lt;2%) with a conditional USD 125K investment offer for a climate-tech startup.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">Network Capital Fellowship</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2022</div>
+            </div>
+            <p class="text-sm text-black/80 dark:text-white/80">Selected for the fully funded Web3, Crypto & Future of Work Fellowship, chosen from hundreds of applicants to explore frameworks shaping the future of work and technology.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="animate text-xs font-semibold uppercase tracking-[0.2em] text-black/60 dark:text-white/60">
+          Community Contribution
+        </div>
+        <div class="space-y-6">
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">UXDX Ambassador - Country Lead</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2025-Present</div>
+            </div>
+            <p class="text-sm text-black/80 dark:text-white/80">Leading the community and events for UXDX India since its inception, scaling to thousands of members.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">Student Mentor</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2023-Present</div>
+            </div>
+            <p class="text-sm text-black/80 dark:text-white/80">Mentoring design students at University of Minnesota and IIT Roorkee, helping navigate design careers and job search.</p>
+          </article>
+          <article class="animate space-y-1">
+            <div class="flex flex-wrap items-baseline gap-2">
+              <div class="text-lg font-semibold text-black dark:text-white">Open Source Contributor</div>
+              <div class="text-sm text-black/60 dark:text-white/60">2025</div>
+            </div>
+            <p class="text-sm text-black/80 dark:text-white/80">Worked to resolve accessibility issues in GitLab's Admin Platform.</p>
+          </article>
+        </div>
+      </section>
     </div>
-  </Container>
+  </div>
 </PageLayout>

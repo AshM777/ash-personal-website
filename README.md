@@ -1,60 +1,44 @@
-# Ash
+# Ash Website
 
-A personal portfolio and blog website built with Astro, Tailwind and TypeScript.
+Personal website hosted at [ashxyz.com](https://ashxyz.com)
 
-## 🚀 Deploy your own
+## Setup
 
-[![Deploy with Vercel](_deploy_vercel.svg)](https://vercel.com/new/clone?repository-url=https://github.com/AshM777/ash)  [![Deploy with Netlify](_deploy_netlify.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/AshM777/ash)
+1. Install dependencies:
+```bash
+npm install
+```
 
-## 📋 Features
+2. Copy `.env.example` to `.env` and fill in your values:
+```bash
+cp .env.example .env
+```
 
-- ✅ 100/100 Lighthouse performance
-- ✅ Responsive
-- ✅ Accessible
-- ✅ SEO-friendly
-- ✅ Typesafe
-- ✅ Minimal style
-- ✅ Light/Dark Theme
-- ✅ Animated UI
-- ✅ Tailwind styling
-- ✅ Auto generated sitemap
-- ✅ Auto generated RSS Feed
-- ✅ Markdown support
-- ✅ MDX Support (components in your markdown)
+3. Required environment variables:
+- `GOOGLE_CLIENT_ID` - Google OAuth Client ID
+- `GOOGLE_CLIENT_SECRET` - Google OAuth Client Secret
+- `ADMIN_ALLOWED_EMAILS` - Comma-separated list of allowed admin emails
+- `GITHUB_REPO` - GitHub repository (e.g., `username/repo`)
+- `GITHUB_TOKEN` - GitHub personal access token with repo permissions
+- `GITHUB_BRANCH` - Branch name (default: `main`)
+- `GITHUB_CONTENT_PATH` - Path to content directory (default: `src/content`)
 
-## 💯 Lighthouse score
-![Lighthouse Score](_lighthouse.png)
+## Development
 
-## 🕊️ Lightweight
-No frameworks or added bulk
+```bash
+npm run dev
+```
 
-## ⚡︎ Fast
-Rendered in ~40ms on localhost
+## Build
 
-## 📄 Configuration
+```bash
+npm run build
+```
 
-The blog posts on the demo serve as the documentation and configuration.
+## Deployment
 
-## 💻 Commands
+The site is configured to deploy to `ashxyz.com`. Make sure to:
 
-All commands are run from the root of the project, from a terminal:
-
-Replace npm with your package manager of choice. `npm`, `pnpm`, `yarn`, `bun`, etc
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run dev:network`     | Starts local dev server on local network         |
-| `npm run sync`            | Generates TypeScript types for all Astro modules.|
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run preview:network` | Preview build on local network                   |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-| `npm run lint`            | Run ESLint                                       |
-| `npm run lint:fix`        | Auto-fix ESLint issues                           |
-
-## 🏛️ License
-
-MIT
+1. Set up Google OAuth credentials with authorized redirect URI: `https://ashxyz.com/api/admin/google-callback`
+2. Configure environment variables in your hosting platform
+3. Push changes to GitHub main branch for automatic deployment

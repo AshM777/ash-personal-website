@@ -4,7 +4,8 @@ import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
-  site: "https://ash.pages.dev",
+  site: "https://ashxyz.com",
+  output: "hybrid",
   integrations: [mdx(), sitemap(), tailwind()],
   devToolbar: {
     enabled: false

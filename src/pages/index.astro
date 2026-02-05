@@ -4,154 +4,172 @@ import Container from "@components/Container.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import ArrowCard from "@components/ArrowCard.astro";
 import Link from "@components/Link.astro";
-import { dateRange } from "@lib/utils";
 import { SITE, HOME, SOCIALS } from "@consts";
 
 const threads = (await getCollection("threads"))
   .filter(post => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0,SITE.NUM_POSTS_ON_HOMEPAGE);
+  .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE);
 
 const projects = (await getCollection("projects"))
   .filter(project => !project.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0,SITE.NUM_PROJECTS_ON_HOMEPAGE);
+  .slice(0, 3);
 
-const allwork = (await getCollection("work"))
-  .sort((a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf())
-  .slice(0,SITE.NUM_WORKS_ON_HOMEPAGE);
-
-const work = await Promise.all(
-  allwork.map(async (item) => {
-    const { Content } = await item.render();
-    return { ...item, Content };
-  })
-);
+const library = (await getCollection("library"))
+  .sort(
+    (a, b) =>
+      (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0)
+  )
+  .slice(0, 4);
 
 ---
 
 <PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
   <Container>
-    <h3 class="animate font-semibold text-black dark:text-white">
-      <img src="/images/profile.png" alt="Aashish Manchanda" style="width: 120px; height: auto; border: 1px solid; border-radius: 8px; margin-bottom: 10px;" />
-      Hi, I'm Aashish Manchanda <span class="text-xl">👋</span> 
-    </h3>
     <div class="space-y-16">
-      <section>
-      <article class="space-y-4">
-        <p class="animate font-semibold text-black dark:text-white">
-        👨‍🎨 <i class="font-semibold">UX Design Leader | Product Strategist | AI & Sustainability Enthusiast</i>
-        </p>
-        <p class="animate text-black dark:text-white">
-        from crafting seamless experiences in ed-tech, enterprise, consumer SaaS, AI agents, fintech, and web3 to leading global design teams across time zones—I've dabbled in (and occasionally broken) just about everything UX.
-        </p>
-        <p class="animate text-black dark:text-white">
-        currently shaping enterprise design at <i>
-        <Link href="https://www.cisco.com/c/en/us/products/security/artificial-intelligence-ai.html#~overview" aria-label="Cisco" external>
-          Cisco
-        </Link></i>, I specialize in scaling design teams, driving business impact, and blending AI with UX to create meaningful, user-centric solutions.
-        </p>
-        <p class="animate italic text-black dark:text-white">
-        ☕ fueled by: curiosity, coffee, and an unreasonable number of browser tabs!
-        </p>
-        </article>
-      </section>
+      <section class="grid items-start gap-16 md:grid-cols-12">
+        <div class="space-y-8 md:col-span-7">
+          <div class="animate space-y-6">
+            <h3 class="text-3xl font-semibold text-black dark:text-white leading-tight">
+              Hi, I'm Aashish Manchanda <span class="text-2xl">👋</span>
+            </h3>
+            <p class="text-lg font-semibold italic text-black dark:text-white">
+              UX Design Leader · Product Strategist · Mediocre Developer.
+            </p>
+            <p class="text-base leading-relaxed text-black dark:text-white">
+              I build and scale product experiences across enterprise, SaaS, and emerging technologies, grounded in research, thoughtful systems, and human-centered strategy.
+            </p>
+            <p class="text-base leading-relaxed text-black dark:text-white">
+              Currently leading agentic enterprise design for{" "}
+              <Link
+                href="https://www.cisco.com/site/in/en/products/security/ai-defense/index.html"
+                aria-label="AI and Data Security"
+                external
+              >
+                AI and Data Security
+              </Link>
+              {" "}at{" "}
+              <Link
+                href="https://www.cisco.com/c/en/us/products/security/artificial-intelligence-ai.html#~overview"
+                aria-label="Cisco"
+                external
+              >
+                Cisco
+              </Link>
+              .
+            </p>
+            
+            <div class="space-y-4 pt-4">
+              <p class="font-semibold text-black dark:text-white">
+                Here are three ways I'd frame what I care about right now:
+              </p>
+              <ul class="space-y-3 leading-relaxed text-black dark:text-white">
+                <li><span class="font-semibold">Practical:</span> Can we build AI tools that make people more capable without making them more dependent?</li>
+                <li><span class="font-semibold">Systemic:</span> What does it mean to design products when growth and sustainability are in tension?</li>
+                <li><span class="font-semibold">Philosophical:</span> How do we create technology that expands human agency instead of narrowing it?</li>
+              </ul>
+            </div>
 
-      <section class="animate space-y-6">
-        <div class="flex flex-wrap gap-y-2 items-center justify-between">
-          <h5 class="font-semibold text-black dark:text-white">
-            latest threads
-          </h5>
-          <Link href="/threads">
-            see all posts
-          </Link>
-        </div>
-        <ul class="flex flex-col gap-4">
-          {threads.map(post => (
-            <li>
-              <ArrowCard entry={post} />
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <!--
-        <section class="animate space-y-6">
-          <div class="flex flex-wrap gap-y-2 items-center justify-between">
-            <h5 class="font-semibold text-black dark:text-white">
-          work experience
-            </h5>
-            <Link href="/work">
-          see all work
-            </Link>
+            <div class="pt-6 border-t" style="border-color: var(--border);">
+              <p class="leading-relaxed text-black dark:text-white">
+                Previously, I've co-founded two companies (<Link href="https://www.linkedin.com/company/emitbase/" external class="font-semibold">Emitbase</Link> and <Link href="https://www.twotrim.com/" external class="font-semibold">Twotrim</Link>) and worked/advised multiple startups including <Link href="https://superteam.fun/" external>Solana</Link>, <Link href="https://www.scaler.com/" external>Scaler</Link>, <Link href="https://economictimes.indiatimes.com/tech/funding/crypto-investment-platform-flint-bags-5-1-million-in-funding-led-by-sequoia-india-global-founders/articleshow/89110369.cms?from=mdr" external>Flint</Link>, <Link href="https://apps.apple.com/in/app/travokarma/id1596474556" external>Travokarma</Link>, <Link href="https://finstreet.in/" external>Finstreet</Link>, <Link href="https://www.linkedin.com/company/trooking" external>Trooking</Link>, <Link href="https://dex.saros.xyz/info" external>Saros Finance</Link>, <Link href="https://www.alchemy.com/dapps/hyperspace" external>Hyperspace</Link>, <Link href="https://yourstory.com/2019/08/funding-ai-edtech-startup-blackboard-radio-villgro-learning" external>Blackboard Radio</Link>, among others. These days, I'm increasingly drawn to climate tech and the messy, interesting problem of building venture-scale businesses that don't treat the planet like an externality.
+              </p>
+            </div>
           </div>
-          <ul class="flex flex-col space-y-4">
-            {work.map(entry => (
-          <li>
-            <div class="text-sm opacity-75">
-              {dateRange(entry.data.dateStart, entry.data.dateEnd)}
-            </div>
-            <div class="font-semibold text-black dark:text-white">
-              {entry.data.company}
-            </div>
-            <div class="text-sm opacity-75">
-              {entry.data.role}
-            </div>
-            <article>
-              <entry.Content />
-            </article>
-          </li>
-            ))}
-          </ul>
-        </section>
+        </div>
+        <div class="animate md:col-span-5">
+          <div class="space-y-4">
+            <img
+              id="profile-image"
+              src="/images/profile/1.jpg"
+              alt="Aashish Manchanda"
+              class="w-full h-[600px] rounded-3xl border border-stone-300 object-cover shadow-sm dark:border-stone-700"
+            />
+            <button
+              id="change-image"
+              class="change-image-btn text-sm underline underline-offset-2 transition-colors duration-300 ease-in-out cursor-pointer"
+              style="color: var(--ink); text-decoration-color: var(--accent-soft);"
+            >
+              change image
+            </button>
+          </div>
+        </div>
+      </section>
 
-        <section class="animate space-y-6">
-          <div class="flex flex-wrap gap-y-2 items-center justify-between">
-            <h5 class="font-semibold text-black dark:text-white">
-          recent projects
-            </h5>
-            <Link href="/projects">
-          see all projects
-            </Link>
+      <section class="space-y-8">
+        <section class="animate card space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-y-2">
+            <h5 class="card-title">Latest threads</h5>
+            <Link href="/threads">see all posts</Link>
           </div>
           <ul class="flex flex-col gap-4">
-            {projects.map(project => (
-          <li>
-            <ArrowCard entry={project} />
-          </li>
+            {threads.map(post => (
+              <li>
+                <ArrowCard entry={post} />
+              </li>
             ))}
           </ul>
         </section>
-      -->
 
-      <section class="animate space-y-4">
-        <h5 class="font-semibold text-black dark:text-white">
-          let's connect
-        </h5>
-        <article>
-          <p>
-            if you want to get in touch with me about something or just to say hi,
-            reach out on social media or send me an email.
-          </p>
-        </article>
+      </section>
+
+      <section class="animate card space-y-4">
+        <h5 class="card-title">Let's connect</h5>
+        <p class="text-black dark:text-white">
+          Looking to collaborate, share ideas, or simply connect? I'd love to hear from you. I'm also open to advising or investing in early-stage startups, or we can just catch up over coffee.
+        </p>
         <ul class="flex flex-wrap gap-2">
           {SOCIALS.map(SOCIAL => (
-            <li class="flex gap-x-2 text-nowrap">
-              <Link href={SOCIAL.HREF} external aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}>
+            <li>
+              <Link
+                href={SOCIAL.HREF}
+                external
+                aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}
+                class="pill"
+              >
                 {SOCIAL.NAME}
               </Link>
-              {"/"}
             </li>
           ))}
-          <!--
-                <li class="line-clamp-1">
-                <Link href={`mailto:${SITE.EMAIL}`} aria-label={`Email ${SITE.NAME}`}>
-                  {SITE.EMAIL}
-                </Link>
-                </li>
-          -->
+          <li>
+            <Link
+              href={`mailto:${SITE.EMAIL}`}
+              aria-label={`Email ${SITE.NAME}`}
+              class="pill"
+            >
+              {SITE.EMAIL}
+            </Link>
+          </li>
         </ul>
       </section>
     </div>
   </Container>
 </PageLayout>
+
+<style>
+  .change-image-btn:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+</style>
+
+<script>
+  const profileImages = [
+    '/images/profile/1.jpg',
+    '/images/profile/2.jpg',
+    '/images/profile/3.jpg'
+  ];
+  
+  let currentImageIndex = 0;
+  
+  const imageElement = document.getElementById('profile-image') as HTMLImageElement;
+  const changeButton = document.getElementById('change-image');
+  
+  if (changeButton && imageElement) {
+    changeButton.addEventListener('click', () => {
+      currentImageIndex = (currentImageIndex + 1) % profileImages.length;
+      imageElement.src = profileImages[currentImageIndex];
+    });
+  }
+</script>

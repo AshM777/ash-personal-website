@@ -1,0 +1,40 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import { LIBRARY } from "@consts";
+
+const books = (await getCollection("library"))
+  .sort(
+    (a, b) =>
+      (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0)
+  );
+---
+
+<PageLayout title={LIBRARY.TITLE} description={LIBRARY.DESCRIPTION}>
+  <Container>
+    <div class="space-y-10">
+      <div class="animate font-semibold text-black dark:text-white">
+        Library
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {books.map((book) => (
+          <article class="animate space-y-3">
+            <img
+              src={book.data.coverImage}
+              alt={`${book.data.title} cover`}
+              class="h-64 w-full rounded-2xl border border-stone-200 object-cover shadow-sm dark:border-stone-800"
+              loading="lazy"
+            />
+            <div class="space-y-1">
+              <div class="font-semibold text-black dark:text-white">
+                {book.data.title}
+              </div>
+              <div class="text-sm opacity-70">{book.data.author}</div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </Container>
+</PageLayout>

@@ -1,0 +1,1227 @@
+---
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+---
+
+<PageLayout title="Admin" description="Create new threads">
+  <Container>
+    <div class="space-y-10">
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="animate text-2xl font-semibold text-black dark:text-white">
+              Admin Editor
+            </div>
+            <p class="animate text-sm text-black/60 dark:text-white/60">
+              Use this page to create and manage content without touching code.
+            </p>
+          </div>
+          <div id="admin-status" class="hidden">
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-black/60 dark:text-white/60">Admin</span>
+              <button
+                id="logout-btn"
+                type="button"
+                class="rounded-md border border-black/10 dark:border-white/10 px-3 py-1.5 text-xs font-medium text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="auth-form" class="animate space-y-4">
+        <div class="space-y-4">
+          <p class="text-sm text-black/60 dark:text-white/60">
+            Sign in with your Google account to access the admin panel.
+          </p>
+          <a
+            href="/api/admin/google-auth"
+            class="inline-flex items-center justify-center gap-3 rounded-md bg-white dark:bg-gray-800 border border-black/10 dark:border-white/10 px-6 py-3 text-sm font-medium text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+              <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+              <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.348 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/>
+              <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/>
+            </svg>
+            Sign in with Google
+          </a>
+          <span id="auth-status" class="block text-sm text-black/60 dark:text-white/60"></span>
+        </div>
+      </div>
+
+      <!-- Admin Dashboard -->
+      <div id="admin-dashboard" class="animate space-y-6 hidden">
+        <div class="text-xl font-semibold text-black dark:text-white">Dashboard</div>
+        <div class="grid gap-4 md:grid-cols-3">
+          <div class="p-4 border border-black/10 dark:border-white/10 rounded-md">
+            <div class="text-sm text-black/60 dark:text-white/60">Threads</div>
+            <div id="thread-count" class="text-2xl font-semibold text-black dark:text-white">-</div>
+          </div>
+          <div class="p-4 border border-black/10 dark:border-white/10 rounded-md">
+            <div class="text-sm text-black/60 dark:text-white/60">Drafts</div>
+            <div id="draft-count" class="text-2xl font-semibold text-black dark:text-white">-</div>
+          </div>
+          <div class="p-4 border border-black/10 dark:border-white/10 rounded-md">
+            <div class="text-sm text-black/60 dark:text-white/60">Portfolio Items</div>
+            <div id="portfolio-count" class="text-2xl font-semibold text-black dark:text-white">-</div>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            type="button"
+            id="quick-new-thread"
+            class="rounded-md bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black"
+          >
+            + New Thread
+          </button>
+          <button
+            type="button"
+            id="quick-new-portfolio"
+            class="rounded-md border border-black/10 dark:border-white/10 px-4 py-2 text-sm font-medium text-black dark:text-white"
+          >
+            + New Portfolio Item
+          </button>
+        </div>
+      </div>
+
+      <!-- Thread Management Section -->
+      <div id="thread-management" class="animate space-y-6 hidden">
+        <div class="flex items-center justify-between">
+          <div class="text-xl font-semibold text-black dark:text-white">Threads</div>
+          <button
+            type="button"
+            id="show-thread-form"
+            class="rounded-md bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black"
+          >
+            + New Thread
+          </button>
+        </div>
+        <div id="thread-list" class="space-y-2">
+          <!-- Threads will be loaded here -->
+        </div>
+      </div>
+
+      <form id="thread-form" class="animate space-y-6 hidden">
+        <div class="grid gap-6 md:grid-cols-2">
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-black dark:text-white" for="title">
+              Title
+            </label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              required
+              class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+              placeholder="Thread title"
+            />
+          </div>
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-black dark:text-white" for="slug">
+              Slug (optional)
+            </label>
+            <input
+              id="slug"
+              name="slug"
+              type="text"
+              class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+              placeholder="e.g. my-new-thread"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-black dark:text-white" for="description">
+            Description
+          </label>
+          <input
+            id="description"
+            name="description"
+            type="text"
+            required
+            class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+            placeholder="Short summary used in listings"
+          />
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-3">
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-black dark:text-white" for="date">
+              Date
+            </label>
+            <input
+              id="date"
+              name="date"
+              type="date"
+              required
+              class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+            />
+          </div>
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-black dark:text-white" for="format">
+              Format
+            </label>
+            <select
+              id="format"
+              name="format"
+              class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+            >
+              <option value="md">Markdown (.md)</option>
+              <option value="mdx">MDX (.mdx)</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-black dark:text-white" for="draft">
+              Draft
+            </label>
+            <select
+              id="draft"
+              name="draft"
+              class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+            >
+              <option value="false">Published</option>
+              <option value="true">Draft</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block text-sm font-medium text-black dark:text-white" for="content">
+              Content
+            </label>
+            <button
+              type="button"
+              id="toggle-preview"
+              class="text-xs text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"
+            >
+              Toggle Preview
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-2 p-2 border border-black/10 dark:border-white/10 rounded-md">
+            <button type="button" data-action="h1" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Heading 1">H1</button>
+            <button type="button" data-action="h2" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Heading 2">H2</button>
+            <button type="button" data-action="h3" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Heading 3">H3</button>
+            <div class="w-px h-6 bg-black/10 dark:bg-white/10"></div>
+            <button type="button" data-action="bold" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5 font-bold" title="Bold">B</button>
+            <button type="button" data-action="italic" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5 italic" title="Italic">I</button>
+            <button type="button" data-action="strikethrough" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5 line-through" title="Strikethrough">S</button>
+            <div class="w-px h-6 bg-black/10 dark:bg-white/10"></div>
+            <button type="button" data-action="quote" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Quote">"</button>
+            <button type="button" data-action="code" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5 font-mono text-xs" title="Code">&lt;/&gt;</button>
+            <button type="button" data-action="hr" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Horizontal Rule">—</button>
+            <div class="w-px h-6 bg-black/10 dark:bg-white/10"></div>
+            <button type="button" data-action="ul" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Bullet List">•</button>
+            <button type="button" data-action="ol" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Numbered List">1.</button>
+            <div class="w-px h-6 bg-black/10 dark:bg-white/10"></div>
+            <button type="button" data-action="link" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Link">🔗</button>
+            <button type="button" data-action="image" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Insert Image">🖼</button>
+            <button type="button" data-action="cover-image" class="p-2 rounded hover:bg-black/5 dark:hover:bg-white/5" title="Cover Image">📷</button>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2">
+            <textarea
+              id="content"
+              name="content"
+              rows="16"
+              class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white font-mono"
+              placeholder="Write your thread content in Markdown or MDX..."
+            ></textarea>
+            <div id="preview" class="hidden w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white prose prose-sm dark:prose-invert max-w-none"></div>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-black dark:text-white" for="images">
+            Image attachments (optional)
+          </label>
+          <input
+            id="images"
+            name="images"
+            type="file"
+            multiple
+            accept="image/*"
+            class="w-full text-sm text-black dark:text-white"
+          />
+          <p class="text-xs text-black/60 dark:text-white/60">
+            Uploaded images will be stored in the thread folder. Select images to insert
+            Markdown tags at your cursor position.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            type="submit"
+            class="rounded-md bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black"
+          >
+            Create thread
+          </button>
+          <span id="status" class="text-sm text-black/60 dark:text-white/60"></span>
+        </div>
+      </form>
+
+      <!-- Portfolio Editor Section -->
+      <div id="portfolio-editor" class="animate space-y-6 hidden">
+        <div class="space-y-2">
+          <div class="text-xl font-semibold text-black dark:text-white">
+            Portfolio Editor
+          </div>
+          <p class="text-sm text-black/60 dark:text-white/60">
+            Manage your portfolio items. Drag to reorder, click to edit.
+          </p>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="flex flex-wrap gap-2 border-b border-black/10 dark:border-white/10">
+          <button
+            type="button"
+            data-category-tab
+            data-category="all"
+            class="px-4 py-2 text-sm font-medium text-black dark:text-white border-b-2 border-black dark:border-white"
+          >
+            All
+          </button>
+          <button
+            type="button"
+            data-category-tab
+            data-category="Problem Solving & Design"
+            class="px-4 py-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white border-b-2 border-transparent"
+          >
+            Problem Solving & Design
+          </button>
+          <button
+            type="button"
+            data-category-tab
+            data-category="Gallery"
+            class="px-4 py-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white border-b-2 border-transparent"
+          >
+            Gallery
+          </button>
+          <button
+            type="button"
+            data-category-tab
+            data-category="User Research"
+            class="px-4 py-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white border-b-2 border-transparent"
+          >
+            User Research
+          </button>
+          <button
+            type="button"
+            data-category-tab
+            data-category="Writing & Publications"
+            class="px-4 py-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white border-b-2 border-transparent"
+          >
+            Writing & Publications
+          </button>
+        </div>
+
+        <!-- Add New Item Button -->
+        <div class="flex items-center justify-between">
+          <button
+            type="button"
+            id="add-portfolio-item"
+            class="rounded-md bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black"
+          >
+            + Add Portfolio Item
+          </button>
+          <span id="portfolio-status" class="text-sm text-black/60 dark:text-white/60"></span>
+        </div>
+
+        <!-- Portfolio Grid Preview -->
+        <div id="portfolio-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 auto-rows-[120px] md:auto-rows-[140px]">
+          <!-- Items will be loaded here via JavaScript -->
+        </div>
+
+        <!-- Portfolio Item Editor Modal -->
+        <div
+          id="portfolio-modal"
+          class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 dark:bg-black/70"
+        >
+          <div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 p-6 m-4">
+            <button
+              type="button"
+              id="close-portfolio-modal"
+              class="absolute top-4 right-4 text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"
+            >
+              ✕
+            </button>
+            <form id="portfolio-item-form" class="space-y-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-black dark:text-white" for="portfolio-title">
+                  Title
+                </label>
+                <input
+                  id="portfolio-title"
+                  name="title"
+                  type="text"
+                  required
+                  class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+                  placeholder="Item title"
+                />
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-black dark:text-white" for="portfolio-description">
+                  Description
+                </label>
+                <input
+                  id="portfolio-description"
+                  name="description"
+                  type="text"
+                  required
+                  class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+                  placeholder="Short description"
+                />
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-black dark:text-white" for="portfolio-url">
+                  URL
+                </label>
+                <input
+                  id="portfolio-url"
+                  name="url"
+                  type="url"
+                  required
+                  class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+                  placeholder="https://example.com"
+                />
+              </div>
+
+              <div class="grid gap-6 md:grid-cols-2">
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-black dark:text-white" for="portfolio-category">
+                    Category
+                  </label>
+                  <select
+                    id="portfolio-category"
+                    name="category"
+                    required
+                    class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+                  >
+                    <option value="Problem Solving & Design">Problem Solving & Design</option>
+                    <option value="Gallery">Gallery</option>
+                    <option value="User Research">User Research</option>
+                    <option value="Writing & Publications">Writing & Publications</option>
+                  </select>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-black dark:text-white" for="portfolio-size">
+                    Card Size
+                  </label>
+                  <select
+                    id="portfolio-size"
+                    name="size"
+                    required
+                    class="w-full rounded-md border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm text-black dark:text-white"
+                  >
+                    <option value="small">Small (1x1)</option>
+                    <option value="wide">Wide (2x1)</option>
+                    <option value="tall">Tall (1x2)</option>
+                    <option value="large">Large (2x2)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-black dark:text-white" for="portfolio-image">
+                  Cover Image (optional)
+                </label>
+                <input
+                  id="portfolio-image"
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  class="w-full text-sm text-black dark:text-white"
+                />
+                <div id="portfolio-image-preview" class="mt-2 hidden">
+                  <img id="portfolio-image-preview-img" src="" alt="Preview" class="max-w-xs rounded-md border border-black/10 dark:border-white/10" />
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-black dark:text-white" for="portfolio-images">
+                  Gallery Images (optional, for multi-image cards)
+                </label>
+                <input
+                  id="portfolio-images"
+                  name="images"
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  class="w-full text-sm text-black dark:text-white"
+                />
+                <div id="portfolio-images-preview" class="mt-2 grid grid-cols-4 gap-2 hidden">
+                  <!-- Image previews will be added here -->
+                </div>
+              </div>
+
+              <input type="hidden" id="portfolio-item-id" name="id" value="" />
+              <input type="hidden" id="portfolio-item-order" name="order" value="0" />
+
+              <div class="flex items-center gap-3">
+                <button
+                  type="submit"
+                  class="rounded-md bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black"
+                >
+                  Save Item
+                </button>
+                <button
+                  type="button"
+                  id="delete-portfolio-item"
+                  class="rounded-md border border-red-500/50 px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20"
+                >
+                  Delete
+                </button>
+                <span id="portfolio-item-status" class="text-sm text-black/60 dark:text-white/60"></span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </Container>
+</PageLayout>
+
+<script>
+  const authForm = document.getElementById("auth-form");
+  const threadForm = document.getElementById("thread-form");
+  const authStatus = document.getElementById("auth-status");
+  const status = document.getElementById("status");
+  const contentField = document.getElementById("content");
+  const imageField = document.getElementById("images");
+
+  const insertAtCursor = (value: string) => {
+    if (!(contentField instanceof HTMLTextAreaElement)) {
+      return;
+    }
+    const start = contentField.selectionStart ?? contentField.value.length;
+    const end = contentField.selectionEnd ?? contentField.value.length;
+    const before = contentField.value.slice(0, start);
+    const after = contentField.value.slice(end);
+    contentField.value = `${before}${value}${after}`;
+    const next = start + value.length;
+    contentField.focus();
+    contentField.setSelectionRange(next, next);
+  };
+
+  const wrapSelection = (prefix: string, suffix: string) => {
+    if (!(contentField instanceof HTMLTextAreaElement)) {
+      return;
+    }
+    const start = contentField.selectionStart ?? contentField.value.length;
+    const end = contentField.selectionEnd ?? contentField.value.length;
+    const selected = contentField.value.slice(start, end) || "text";
+    const before = contentField.value.slice(0, start);
+    const after = contentField.value.slice(end);
+    const wrapped = `${prefix}${selected}${suffix}`;
+    contentField.value = `${before}${wrapped}${after}`;
+    const next = start + wrapped.length;
+    contentField.focus();
+    contentField.setSelectionRange(next, next);
+  };
+
+  const insertLinePrefix = (prefix: string) => {
+    if (!(contentField instanceof HTMLTextAreaElement)) {
+      return;
+    }
+    const start = contentField.selectionStart ?? contentField.value.length;
+    const lineStart = contentField.value.lastIndexOf("\n", start - 1) + 1;
+    const before = contentField.value.slice(0, lineStart);
+    const after = contentField.value.slice(lineStart);
+    contentField.value = `${before}${prefix}${after}`;
+    const next = start + prefix.length;
+    contentField.focus();
+    contentField.setSelectionRange(next, next);
+  };
+
+  const adminStatus = document.getElementById("admin-status");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  const portfolioEditor = document.getElementById("portfolio-editor");
+  const portfolioGrid = document.getElementById("portfolio-grid");
+  const addPortfolioBtn = document.getElementById("add-portfolio-item");
+  const portfolioModal = document.getElementById("portfolio-modal");
+  const closePortfolioModal = document.getElementById("close-portfolio-modal");
+  const portfolioItemForm = document.getElementById("portfolio-item-form");
+  const portfolioStatus = document.getElementById("portfolio-status");
+  const portfolioItemStatus = document.getElementById("portfolio-item-status");
+  const deletePortfolioBtn = document.getElementById("delete-portfolio-item");
+
+  const adminDashboard = document.getElementById("admin-dashboard");
+  const threadManagement = document.getElementById("thread-management");
+  const threadList = document.getElementById("thread-list");
+  const showThreadForm = document.getElementById("show-thread-form");
+  const quickNewThread = document.getElementById("quick-new-thread");
+  const quickNewPortfolio = document.getElementById("quick-new-portfolio");
+  const threadCount = document.getElementById("thread-count");
+  const draftCount = document.getElementById("draft-count");
+  const portfolioCount = document.getElementById("portfolio-count");
+
+  const setAuthenticated = async () => {
+    if (adminDashboard instanceof HTMLElement) {
+      adminDashboard.classList.remove("hidden");
+    }
+    if (authForm instanceof HTMLElement) {
+      authForm.classList.add("hidden");
+    }
+    if (adminStatus instanceof HTMLElement) {
+      adminStatus.classList.remove("hidden");
+    }
+    sessionStorage.setItem("admin-auth", "1");
+    loadDashboardStats();
+  };
+
+  const loadDashboardStats = async () => {
+    try {
+      const [threadsRes, portfolioRes] = await Promise.all([
+        fetch(`/api/admin/thread`),
+        fetch(`/api/admin/portfolio`),
+      ]);
+      const threadsData = await threadsRes.json();
+      const portfolioData = await portfolioRes.json();
+      if (threadsRes.ok && threadsData.threads) {
+        const threads = threadsData.threads;
+        const drafts = threads.filter((t: any) => t.data.draft);
+        if (threadCount) threadCount.textContent = threads.length.toString();
+        if (draftCount) draftCount.textContent = drafts.length.toString();
+      }
+      if (portfolioRes.ok && portfolioData.items) {
+        if (portfolioCount) portfolioCount.textContent = portfolioData.items.length.toString();
+      }
+    } catch (error) {
+      console.error("Failed to load dashboard stats:", error);
+    }
+  };
+
+  const setUnauthenticated = () => {
+    if (threadForm instanceof HTMLFormElement) {
+      threadForm.classList.add("hidden");
+    }
+    if (adminDashboard instanceof HTMLElement) {
+      adminDashboard.classList.add("hidden");
+    }
+    if (threadManagement instanceof HTMLElement) {
+      threadManagement.classList.add("hidden");
+    }
+    if (portfolioEditor instanceof HTMLElement) {
+      portfolioEditor.classList.add("hidden");
+    }
+    if (authForm instanceof HTMLElement) {
+      authForm.classList.remove("hidden");
+    }
+    if (adminStatus instanceof HTMLElement) {
+      adminStatus.classList.add("hidden");
+    }
+    sessionStorage.removeItem("admin-auth");
+  };
+
+  if (quickNewThread) {
+    quickNewThread.addEventListener("click", () => {
+      if (threadForm instanceof HTMLFormElement) {
+        threadForm.classList.remove("hidden");
+        threadForm.reset();
+      }
+      if (adminDashboard instanceof HTMLElement) {
+        adminDashboard.classList.add("hidden");
+      }
+    });
+  }
+
+  if (quickNewPortfolio) {
+    quickNewPortfolio.addEventListener("click", () => {
+      if (portfolioEditor instanceof HTMLElement) {
+        portfolioEditor.classList.remove("hidden");
+      }
+      if (adminDashboard instanceof HTMLElement) {
+        adminDashboard.classList.add("hidden");
+      }
+      if (addPortfolioBtn) {
+        (addPortfolioBtn as HTMLButtonElement).click();
+      }
+    });
+  }
+
+  // Thread Management Functions
+  const loadThreads = async () => {
+    if (!threadList) return;
+    try {
+      const response = await fetch(`/api/admin/thread`);
+      const data = await response.json();
+      if (!response.ok) {
+        threadList.innerHTML = `<p class="text-sm text-red-600">${data.message || "Failed to load threads."}</p>`;
+        return;
+      }
+      renderThreadList(data.threads || []);
+    } catch (error) {
+      threadList.innerHTML = `<p class="text-sm text-red-600">Network error. Please try again.</p>`;
+    }
+  };
+
+  const renderThreadList = (threads: any[]) => {
+    if (!threadList) return;
+    if (threads.length === 0) {
+      threadList.innerHTML = `<p class="text-sm text-black/60 dark:text-white/60">No threads yet. Create your first thread!</p>`;
+      return;
+    }
+    threadList.innerHTML = threads.map((thread) => `
+      <div class="flex items-center justify-between p-4 border border-black/10 dark:border-white/10 rounded-md">
+        <div>
+          <div class="font-medium text-black dark:text-white">${thread.data.title}</div>
+          <div class="text-sm text-black/60 dark:text-white/60">${thread.data.description}</div>
+          <div class="text-xs text-black/40 dark:text-white/40 mt-1">
+            ${new Date(thread.data.date).toLocaleDateString()} • ${thread.data.draft ? "Draft" : "Published"}
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" data-edit-thread="${thread.slug}" class="px-3 py-1 text-xs border border-black/10 dark:border-white/10 rounded hover:bg-black/5 dark:hover:bg-white/5">
+            Edit
+          </button>
+          <button type="button" data-delete-thread="${thread.slug}" class="px-3 py-1 text-xs border border-red-500/50 text-red-600 dark:text-red-400 rounded hover:bg-red-50 dark:hover:bg-red-950/20">
+            Delete
+          </button>
+        </div>
+      </div>
+    `).join("");
+
+    threadList.querySelectorAll("[data-edit-thread]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const slug = (e.target as HTMLElement).dataset.editThread;
+        if (slug) editThread(slug);
+      });
+    });
+
+    threadList.querySelectorAll("[data-delete-thread]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const slug = (e.target as HTMLElement).dataset.deleteThread;
+        if (slug && confirm("Are you sure you want to delete this thread?")) {
+          deleteThread(slug);
+        }
+      });
+    });
+  };
+
+  const editThread = async (slug: string) => {
+    try {
+      const response = await fetch(`/api/admin/thread/${slug}`);
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.message || "Failed to load thread.");
+        return;
+      }
+      const thread = data.thread;
+      (document.getElementById("title") as HTMLInputElement).value = thread.data.title;
+      (document.getElementById("description") as HTMLInputElement).value = thread.data.description;
+      (document.getElementById("date") as HTMLInputElement).value = new Date(thread.data.date).toISOString().split("T")[0];
+      (document.getElementById("format") as HTMLSelectElement).value = thread.id.endsWith(".mdx") ? "mdx" : "md";
+      (document.getElementById("draft") as HTMLSelectElement).value = thread.data.draft ? "true" : "false";
+      (document.getElementById("content") as HTMLTextAreaElement).value = thread.body || "";
+      (document.getElementById("slug") as HTMLInputElement).value = slug;
+      if (threadForm instanceof HTMLFormElement) {
+        threadForm.classList.remove("hidden");
+      }
+      if (threadManagement instanceof HTMLElement) {
+        threadManagement.classList.add("hidden");
+      }
+      threadForm.scrollIntoView({ behavior: "smooth" });
+    } catch (error) {
+      alert("Network error. Please try again.");
+    }
+  };
+
+  const deleteThread = async (slug: string) => {
+    try {
+      const response = await fetch(`/api/admin/thread/${slug}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.message || "Failed to delete thread.");
+        return;
+      }
+      loadThreads();
+    } catch (error) {
+      alert("Network error. Please try again.");
+    }
+  };
+
+  if (showThreadForm) {
+    showThreadForm.addEventListener("click", () => {
+      if (threadForm instanceof HTMLFormElement) {
+        threadForm.classList.remove("hidden");
+        (threadForm.querySelector("[name='slug']") as HTMLInputElement).value = "";
+        threadForm.reset();
+      }
+      if (threadManagement instanceof HTMLElement) {
+        threadManagement.classList.add("hidden");
+      }
+    });
+  }
+
+  // Portfolio Management Functions
+  const loadPortfolioItems = async () => {
+    if (!portfolioGrid) return;
+    portfolioStatus.textContent = "Loading...";
+    try {
+      const response = await fetch("/api/admin/portfolio");
+      const data = await response.json();
+      if (!response.ok) {
+        portfolioStatus.textContent = data.message || "Failed to load portfolio items.";
+        return;
+      }
+      renderPortfolioGrid(data.items || []);
+      portfolioStatus.textContent = "";
+    } catch (error) {
+      portfolioStatus.textContent = "Network error. Please try again.";
+    }
+  };
+
+  const renderPortfolioGrid = (items: any[]) => {
+    if (!portfolioGrid) return;
+    portfolioGrid.innerHTML = "";
+    
+    items.forEach((item, index) => {
+      const card = document.createElement("div");
+      card.className = `group relative col-span-2 overflow-hidden rounded-xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/20 cursor-move ${getSizeClasses(item.data.size)}`;
+      card.draggable = true;
+      card.dataset.itemId = item.id;
+      card.dataset.itemSlug = item.slug;
+      
+      if (item.data.image) {
+        card.innerHTML = `
+          <img src="${item.data.image}" alt="${item.data.title}" class="h-full w-full object-cover" />
+          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="absolute bottom-0 left-0 right-0 p-3">
+              <div class="text-white text-sm font-semibold">${item.data.title}</div>
+            </div>
+          </div>
+          <button type="button" class="absolute top-2 right-2 px-2 py-1 bg-black/80 text-white text-xs rounded opacity-0 group-hover:opacity-100" data-edit-item="${item.slug}">Edit</button>
+        `;
+      } else if (item.data.images && item.data.images.length > 0) {
+        const imagesHtml = item.data.images.slice(0, 4).map((img: string) => 
+          `<div class="overflow-hidden"><img src="${img}" class="h-full w-full object-cover" /></div>`
+        ).join("");
+        card.innerHTML = `
+          <div class="grid grid-cols-2 h-full gap-0.5">${imagesHtml}</div>
+          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="absolute bottom-0 left-0 right-0 p-3">
+              <div class="text-white text-sm font-semibold">${item.data.title}</div>
+            </div>
+          </div>
+          <button type="button" class="absolute top-2 right-2 px-2 py-1 bg-black/80 text-white text-xs rounded opacity-0 group-hover:opacity-100" data-edit-item="${item.slug}">Edit</button>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="h-full w-full flex flex-col justify-center p-4">
+            <div class="font-semibold text-sm text-black dark:text-white">${item.data.title}</div>
+            <div class="text-xs text-black/60 dark:text-white/60 mt-1">${item.data.description}</div>
+          </div>
+          <button type="button" class="absolute top-2 right-2 px-2 py-1 bg-black/80 text-white text-xs rounded opacity-0 group-hover:opacity-100" data-edit-item="${item.slug}">Edit</button>
+        `;
+      }
+      
+      card.addEventListener("click", (e) => {
+        if ((e.target as HTMLElement).dataset.editItem) {
+          editPortfolioItem(item.slug);
+        }
+      });
+      
+      portfolioGrid.appendChild(card);
+    });
+    
+    // Initialize drag and drop
+    initDragAndDrop();
+  };
+
+  const getSizeClasses = (size: string) => {
+    switch (size) {
+      case 'large': return 'md:col-span-2 md:row-span-2';
+      case 'wide': return 'md:col-span-2 md:row-span-1';
+      case 'tall': return 'md:col-span-1 md:row-span-2';
+      default: return 'md:col-span-1 md:row-span-1';
+    }
+  };
+
+  const initDragAndDrop = () => {
+    if (!portfolioGrid) return;
+    let draggedElement: HTMLElement | null = null;
+    
+    portfolioGrid.querySelectorAll("[draggable]").forEach((item) => {
+      item.addEventListener("dragstart", (e) => {
+        draggedElement = item as HTMLElement;
+        (item as HTMLElement).style.opacity = "0.5";
+      });
+      
+      item.addEventListener("dragend", () => {
+        if (draggedElement) draggedElement.style.opacity = "1";
+        draggedElement = null;
+      });
+      
+      item.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(portfolioGrid, e.clientY);
+        if (afterElement == null && draggedElement) {
+          portfolioGrid.appendChild(draggedElement);
+        } else if (draggedElement && afterElement) {
+          portfolioGrid.insertBefore(draggedElement, afterElement);
+        }
+      });
+    });
+  };
+
+  const getDragAfterElement = (container: HTMLElement, y: number) => {
+    const draggableElements = [...container.querySelectorAll("[draggable]:not(.dragging)")];
+    
+    return draggableElements.reduce((closest, child) => {
+      const box = (child as HTMLElement).getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    }, { offset: Number.NEGATIVE_INFINITY, element: null as Element | null }).element;
+  };
+
+  const editPortfolioItem = async (slug: string) => {
+    if (!portfolioModal || !portfolioItemForm) return;
+    portfolioItemStatus.textContent = "Loading...";
+    try {
+      const response = await fetch(`/api/admin/portfolio/${slug}`);
+      const data = await response.json();
+      if (!response.ok) {
+        portfolioItemStatus.textContent = data.message || "Failed to load item.";
+        return;
+      }
+      
+      const item = data.item;
+      (document.getElementById("portfolio-title") as HTMLInputElement).value = item.data.title;
+      (document.getElementById("portfolio-description") as HTMLInputElement).value = item.data.description;
+      (document.getElementById("portfolio-url") as HTMLInputElement).value = item.data.url;
+      (document.getElementById("portfolio-category") as HTMLSelectElement).value = item.data.category;
+      (document.getElementById("portfolio-size") as HTMLSelectElement).value = item.data.size;
+      (document.getElementById("portfolio-item-id") as HTMLInputElement).value = item.id;
+      (document.getElementById("portfolio-item-order") as HTMLInputElement).value = item.data.order || "0";
+      
+      portfolioModal.classList.remove("hidden");
+      portfolioModal.classList.add("flex");
+      portfolioItemStatus.textContent = "";
+    } catch (error) {
+      portfolioItemStatus.textContent = "Network error. Please try again.";
+    }
+  };
+
+  const openNewPortfolioModal = () => {
+    if (!portfolioModal || !portfolioItemForm) return;
+    (portfolioItemForm as HTMLFormElement).reset();
+    (document.getElementById("portfolio-item-id") as HTMLInputElement).value = "";
+    portfolioModal.classList.remove("hidden");
+    portfolioModal.classList.add("flex");
+  };
+
+  if (addPortfolioBtn) {
+    addPortfolioBtn.addEventListener("click", openNewPortfolioModal);
+  }
+
+  if (closePortfolioModal) {
+    closePortfolioModal.addEventListener("click", () => {
+      if (portfolioModal) {
+        portfolioModal.classList.add("hidden");
+        portfolioModal.classList.remove("flex");
+      }
+    });
+  }
+
+  if (portfolioItemForm instanceof HTMLFormElement) {
+    portfolioItemForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      portfolioItemStatus.textContent = "Saving...";
+      
+      const formData = new FormData(portfolioItemForm);
+      
+      const itemId = formData.get("id")?.toString();
+      const method = itemId ? "PUT" : "POST";
+      const url = itemId ? `/api/admin/portfolio/${itemId}` : "/api/admin/portfolio";
+      
+      try {
+        const response = await fetch(url, {
+          method,
+          body: formData,
+        });
+        
+        const data = await response.json();
+        if (!response.ok) {
+          portfolioItemStatus.textContent = data.message || "Failed to save item.";
+          return;
+        }
+        
+        portfolioItemStatus.textContent = "Item saved successfully.";
+        if (portfolioModal) {
+          portfolioModal.classList.add("hidden");
+          portfolioModal.classList.remove("flex");
+        }
+        loadPortfolioItems();
+      } catch (error) {
+        portfolioItemStatus.textContent = "Network error. Please try again.";
+      }
+    });
+  }
+
+  if (deletePortfolioBtn) {
+    deletePortfolioBtn.addEventListener("click", async () => {
+      const itemId = (document.getElementById("portfolio-item-id") as HTMLInputElement).value;
+      if (!itemId || !confirm("Are you sure you want to delete this item?")) return;
+      
+      portfolioItemStatus.textContent = "Deleting...";
+      try {
+        const response = await fetch(`/api/admin/portfolio/${itemId}`, {
+          method: "DELETE",
+        });
+        
+        const data = await response.json();
+        if (!response.ok) {
+          portfolioItemStatus.textContent = data.message || "Failed to delete item.";
+          return;
+        }
+        
+        portfolioItemStatus.textContent = "Item deleted.";
+        if (portfolioModal) {
+          portfolioModal.classList.add("hidden");
+          portfolioModal.classList.remove("flex");
+        }
+        loadPortfolioItems();
+      } catch (error) {
+        portfolioItemStatus.textContent = "Network error. Please try again.";
+      }
+    });
+  }
+
+  // Check for existing session on page load
+  const checkSession = async () => {
+    try {
+      const response = await fetch("/api/admin/verify-session");
+      const data = await response.json();
+      if (data.authenticated) {
+        setAuthenticated();
+      }
+    } catch (error) {
+      console.error("Session check error:", error);
+    }
+  };
+
+  // Check URL params for auth result
+  const urlParams = new URLSearchParams(window.location.search);
+  const authError = urlParams.get("error");
+  const authSuccess = urlParams.get("success");
+
+  if (authError && authStatus) {
+    const errorMessages: Record<string, string> = {
+      invalid_request: "Invalid authentication request. Please try again.",
+      token_exchange_failed: "Failed to complete authentication. Please try again.",
+      user_info_failed: "Failed to retrieve user information. Please try again.",
+      unauthorized_email: "Your email is not authorized to access the admin panel. Only aashishmanchanda777@gmail.com is allowed.",
+      server_error: "Server error during authentication. Please try again.",
+    };
+    authStatus.textContent = errorMessages[authError] || "Authentication failed. Please try again.";
+    authStatus.className = "block text-sm text-red-600 dark:text-red-400";
+  } else if (authSuccess) {
+    checkSession();
+    // Clean URL
+    window.history.replaceState({}, document.title, "/admin");
+  } else {
+    checkSession();
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await fetch("/api/admin/auth", { method: "POST" });
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
+      setUnauthenticated();
+      window.location.href = "/admin";
+    });
+  }
+
+  if (threadForm instanceof HTMLFormElement) {
+    threadForm.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      const action = target.getAttribute("data-action");
+      if (!action) {
+        return;
+      }
+      event.preventDefault();
+      switch (action) {
+        case "h1":
+          insertLinePrefix("# ");
+          break;
+        case "h2":
+          insertLinePrefix("## ");
+          break;
+        case "h3":
+          insertLinePrefix("### ");
+          break;
+        case "bold":
+          wrapSelection("**", "**");
+          break;
+        case "italic":
+          wrapSelection("*", "*");
+          break;
+        case "quote":
+          insertLinePrefix("> ");
+          break;
+        case "code":
+          insertAtCursor("\n```\ncode\n```\n");
+          break;
+        case "ul":
+          insertLinePrefix("- ");
+          break;
+        case "ol":
+          insertLinePrefix("1. ");
+          break;
+        case "link":
+          insertAtCursor("[label](https://example.com)");
+          break;
+        case "strikethrough":
+          wrapSelection("~~", "~~");
+          break;
+        case "hr":
+          insertAtCursor("\n---\n");
+          break;
+        case "image":
+          const imageInput = document.createElement("input");
+          imageInput.type = "file";
+          imageInput.accept = "image/*";
+          imageInput.onchange = (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (file) {
+              insertAtCursor(`![${file.name}](./${file.name})`);
+            }
+          };
+          imageInput.click();
+          break;
+        case "cover-image":
+          const coverInput = document.createElement("input");
+          coverInput.type = "file";
+          coverInput.accept = "image/*";
+          coverInput.onchange = (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (file) {
+              insertAtCursor(`\n![cover](./${file.name})\n`);
+            }
+          };
+          coverInput.click();
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  const preview = document.getElementById("preview");
+  const togglePreview = document.getElementById("toggle-preview");
+  let previewMode = false;
+
+  if (togglePreview && preview && contentField instanceof HTMLTextAreaElement) {
+    togglePreview.addEventListener("click", () => {
+      previewMode = !previewMode;
+      if (previewMode) {
+        contentField.classList.add("hidden");
+        preview.classList.remove("hidden");
+        updatePreview();
+      } else {
+        contentField.classList.remove("hidden");
+        preview.classList.add("hidden");
+      }
+    });
+
+    const updatePreview = () => {
+      if (!preview) return;
+      // Simple markdown preview - in production, use a library like marked or markdown-it
+      const markdown = contentField.value;
+      preview.innerHTML = markdown
+        .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+        .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+        .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+        .replace(/\*\*(.*)\*\*/gim, "<strong>$1</strong>")
+        .replace(/\*(.*)\*/gim, "<em>$1</em>")
+        .replace(/~~(.*)~~/gim, "<del>$1</del>")
+        .replace(/`(.*)`/gim, "<code>$1</code>")
+        .replace(/^> (.*$)/gim, "<blockquote>$1</blockquote>")
+        .replace(/^\- (.*$)/gim, "<li>$1</li>")
+        .replace(/^\d+\. (.*$)/gim, "<li>$1</li>")
+        .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2">$1</a>')
+        .replace(/!\[([^\]]+)\]\(([^\)]+)\)/gim, '<img src="$2" alt="$1" />')
+        .replace(/^---$/gim, "<hr />")
+        .replace(/\n/g, "<br />");
+    };
+
+    if (contentField) {
+      contentField.addEventListener("input", () => {
+        if (previewMode) {
+          updatePreview();
+        }
+      });
+    }
+  }
+
+  if (imageField instanceof HTMLInputElement) {
+    imageField.addEventListener("change", () => {
+      const files = Array.from(imageField.files || []);
+      if (!files.length) {
+        return;
+      }
+      const imageTags = files.map((file) => {
+        const name = file.name.split("/").pop() || "image";
+        return `![${name}](./${name})`;
+      });
+      insertAtCursor(`${imageTags.join("\n")}\n`);
+    });
+  }
+
+
+  if (
+    threadForm instanceof HTMLFormElement &&
+    status instanceof HTMLElement
+  ) {
+    threadForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      status.textContent = "Saving...";
+
+      const data = new FormData(threadForm);
+      try {
+        const response = await fetch("/api/admin/thread", {
+          method: "POST",
+          body: data,
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          status.textContent = payload.message || "Failed to create thread.";
+          return;
+        }
+
+        status.textContent = payload.message || "Thread created.";
+        threadForm.reset();
+        if (adminDashboard instanceof HTMLElement) {
+          adminDashboard.classList.remove("hidden");
+        }
+        if (threadForm instanceof HTMLFormElement) {
+          threadForm.classList.add("hidden");
+        }
+        loadDashboardStats();
+      } catch (error) {
+        status.textContent = "Network error. Please try again.";
+      }
+    });
+  }
+</script>
