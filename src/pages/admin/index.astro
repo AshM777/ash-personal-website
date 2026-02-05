@@ -723,11 +723,11 @@ import Container from "@components/Container.astro";
       (document.getElementById("slug") as HTMLInputElement).value = slug;
       if (threadForm instanceof HTMLFormElement) {
         threadForm.classList.remove("hidden");
+        threadForm.scrollIntoView({ behavior: "smooth" });
       }
       if (threadManagement instanceof HTMLElement) {
         threadManagement.classList.add("hidden");
       }
-      threadForm.scrollIntoView({ behavior: "smooth" });
     } catch (error) {
       alert("Network error. Please try again.");
     }
@@ -764,19 +764,19 @@ import Container from "@components/Container.astro";
 
   // Portfolio Management Functions
   const loadPortfolioItems = async () => {
-    if (!portfolioGrid) return;
+    if (!portfolioGrid || !portfolioStatus) return;
     portfolioStatus.textContent = "Loading...";
     try {
       const response = await fetch("/api/admin/portfolio");
       const data = await response.json();
       if (!response.ok) {
-        portfolioStatus.textContent = data.message || "Failed to load portfolio items.";
+        if (portfolioStatus) portfolioStatus.textContent = data.message || "Failed to load portfolio items.";
         return;
       }
       renderPortfolioGrid(data.items || []);
-      portfolioStatus.textContent = "";
+      if (portfolioStatus) portfolioStatus.textContent = "";
     } catch (error) {
-      portfolioStatus.textContent = "Network error. Please try again.";
+      if (portfolioStatus) portfolioStatus.textContent = "Network error. Please try again.";
     }
   };
 
@@ -863,7 +863,8 @@ import Container from "@components/Container.astro";
       
       item.addEventListener("dragover", (e) => {
         e.preventDefault();
-        const afterElement = getDragAfterElement(portfolioGrid, e.clientY);
+        const dragEvent = e as DragEvent;
+        const afterElement = getDragAfterElement(portfolioGrid, dragEvent.clientY);
         if (afterElement == null && draggedElement) {
           portfolioGrid.appendChild(draggedElement);
         } else if (draggedElement && afterElement) {
@@ -889,13 +890,13 @@ import Container from "@components/Container.astro";
   };
 
   const editPortfolioItem = async (slug: string) => {
-    if (!portfolioModal || !portfolioItemForm) return;
+    if (!portfolioModal || !portfolioItemForm || !portfolioItemStatus) return;
     portfolioItemStatus.textContent = "Loading...";
     try {
       const response = await fetch(`/api/admin/portfolio/${slug}`);
       const data = await response.json();
       if (!response.ok) {
-        portfolioItemStatus.textContent = data.message || "Failed to load item.";
+        if (portfolioItemStatus) portfolioItemStatus.textContent = data.message || "Failed to load item.";
         return;
       }
       
@@ -910,9 +911,9 @@ import Container from "@components/Container.astro";
       
       portfolioModal.classList.remove("hidden");
       portfolioModal.classList.add("flex");
-      portfolioItemStatus.textContent = "";
+      if (portfolioItemStatus) portfolioItemStatus.textContent = "";
     } catch (error) {
-      portfolioItemStatus.textContent = "Network error. Please try again.";
+      if (portfolioItemStatus) portfolioItemStatus.textContent = "Network error. Please try again.";
     }
   };
 
@@ -937,9 +938,10 @@ import Container from "@components/Container.astro";
     });
   }
 
-  if (portfolioItemForm instanceof HTMLFormElement) {
+  if (portfolioItemForm instanceof HTMLFormElement && portfolioItemStatus) {
     portfolioItemForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (!portfolioItemStatus) return;
       portfolioItemStatus.textContent = "Saving...";
       
       const formData = new FormData(portfolioItemForm);
@@ -956,26 +958,26 @@ import Container from "@components/Container.astro";
         
         const data = await response.json();
         if (!response.ok) {
-          portfolioItemStatus.textContent = data.message || "Failed to save item.";
+          if (portfolioItemStatus) portfolioItemStatus.textContent = data.message || "Failed to save item.";
           return;
         }
         
-        portfolioItemStatus.textContent = "Item saved successfully.";
+        if (portfolioItemStatus) portfolioItemStatus.textContent = "Item saved successfully.";
         if (portfolioModal) {
           portfolioModal.classList.add("hidden");
           portfolioModal.classList.remove("flex");
         }
         loadPortfolioItems();
       } catch (error) {
-        portfolioItemStatus.textContent = "Network error. Please try again.";
+        if (portfolioItemStatus) portfolioItemStatus.textContent = "Network error. Please try again.";
       }
     });
   }
 
-  if (deletePortfolioBtn) {
+  if (deletePortfolioBtn && portfolioItemStatus) {
     deletePortfolioBtn.addEventListener("click", async () => {
       const itemId = (document.getElementById("portfolio-item-id") as HTMLInputElement).value;
-      if (!itemId || !confirm("Are you sure you want to delete this item?")) return;
+      if (!itemId || !confirm("Are you sure you want to delete this item?") || !portfolioItemStatus) return;
       
       portfolioItemStatus.textContent = "Deleting...";
       try {
@@ -985,18 +987,18 @@ import Container from "@components/Container.astro";
         
         const data = await response.json();
         if (!response.ok) {
-          portfolioItemStatus.textContent = data.message || "Failed to delete item.";
+          if (portfolioItemStatus) portfolioItemStatus.textContent = data.message || "Failed to delete item.";
           return;
         }
         
-        portfolioItemStatus.textContent = "Item deleted.";
+        if (portfolioItemStatus) portfolioItemStatus.textContent = "Item deleted.";
         if (portfolioModal) {
           portfolioModal.classList.add("hidden");
           portfolioModal.classList.remove("flex");
         }
         loadPortfolioItems();
       } catch (error) {
-        portfolioItemStatus.textContent = "Network error. Please try again.";
+        if (portfolioItemStatus) portfolioItemStatus.textContent = "Network error. Please try again.";
       }
     });
   }
