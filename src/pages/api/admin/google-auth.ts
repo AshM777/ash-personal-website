@@ -12,7 +12,11 @@ const getRequiredEnv = (name: string): string => {
 export const GET: APIRoute = async ({ url }) => {
   try {
     const clientId = getRequiredEnv("GOOGLE_CLIENT_ID");
-    const redirectUri = `${url.origin}/api/admin/google-callback`;
+    // Use production URL for redirect in production, localhost for dev
+    const isDev = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+    const redirectUri = isDev 
+      ? `${url.origin}/api/admin/google-callback`
+      : `https://ashxyz.com/api/admin/google-callback`;
     const scope = "openid email profile";
     const state = crypto.randomUUID(); // CSRF protection
     
