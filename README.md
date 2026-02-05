@@ -18,7 +18,7 @@ cp .env.example .env
 - `GOOGLE_CLIENT_ID` - Google OAuth Client ID
 - `GOOGLE_CLIENT_SECRET` - Google OAuth Client Secret
 - `ADMIN_ALLOWED_EMAILS` - Comma-separated list of allowed admin emails
-- `GITHUB_REPO` - GitHub repository (e.g., `username/repo`)
+- `GITHUB_REPO` - GitHub repository (e.g., `AshM777/ash-personal-website-vercel`)
 - `GITHUB_TOKEN` - GitHub personal access token with repo permissions
 - `GITHUB_BRANCH` - Branch name (default: `main`)
 - `GITHUB_CONTENT_PATH` - Path to content directory (default: `src/content`)
