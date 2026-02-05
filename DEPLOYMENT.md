@@ -43,6 +43,7 @@ You have several options for hosting:
    - **Root Directory**: `./` (default)
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
+   - **Install Command**: `npm install` (or `pnpm install` if using pnpm)
 5. Add Environment Variables:
    - `GOOGLE_CLIENT_ID` - Your Google OAuth Client ID
    - `GOOGLE_CLIENT_SECRET` - Your Google OAuth Client Secret
@@ -131,7 +132,11 @@ GITHUB_CONTENT_PATH=src/content
 
 ## Troubleshooting
 
-- **Build fails**: Check that all dependencies are in `package.json`
+- **Build fails**: 
+  - Check that all dependencies are in `package.json`
+  - If you see "No adapter installed" error, Vercel will automatically install `@astrojs/vercel` adapter
+  - Make sure `npm install` runs successfully before build
 - **OAuth doesn't work**: Verify redirect URIs match exactly in Google Console
 - **Domain not working**: Wait 24-48 hours for DNS propagation, or check DNS records
 - **Admin panel shows errors**: Check environment variables are set correctly
+- **TypeScript errors**: All TypeScript errors have been fixed. If you see new ones, check for null checks on DOM elements
